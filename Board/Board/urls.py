@@ -14,17 +14,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.shortcuts import redirect
 from django.urls import path, include
+from django.views.generic.base import RedirectView
+from NoticeBoard.views import accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    
     path('accounts/', include('allauth.urls')),
-    #path('board/'),
-    #path('board/post/create/'),
-    #path('board/post/{id}'),
-    #path('board/post/{id}/edit/'),
-    #path('board/post/{id}/respond/'),
-    #path('board/post/{id}/accept/'),
-    #path('board/post/{id}/delete/'),
-    #path('my_posts/'), #login_required
+    
+    path('', RedirectView.as_view(url='board')),
+    
+    path('board/', Board.as_view(), name='board'),
+    path('board/post/create/', CreateNotice.as_view(), name='board_new'),
+    path('board/post/<int:pk>/', NoticeDetail.as_view(), name='notice_detail'),
+    path('board/post/<int:pk>/edit/', EditNotice.as_view(), name='board_new'),
+    path('board/post/<int:pk>/respond/', RespondToPost.as_view(), name='respond'),
+    path('board/post/<int:pk>/delete/', DeletePost.as_view()),
+    path('board/response/<int:pk>/accept/', accept),
+    path('board/response/<int:pk>/delete/', DeleteResponce.as_view()),
+    path('accounts/profile/', MyResponses.as_view(), name='responses'),
+    #path('accounts/responses/'),
 ]

@@ -1,16 +1,12 @@
+from email.policy import default
 from django.db import models
-from django.forms import CharField, EmailField, PasswordInput
+from django.forms import BooleanField
 from django.urls import reverse
 from ckeditor.fields import RichTextField
 from django.contrib.auth.models import User
 
 
 # Create your models here.
-
-class ForumUser(User):
-    login = CharField()
-    password = PasswordInput()
-    email = EmailField()
 
 class BoardNotice(models.Model):
 
@@ -26,15 +22,30 @@ class BoardNotice(models.Model):
         ('PM', 'Potion Maker'),
         ('MM', 'Master Mage'),
     ]
-    
-    author = models.ForeignKey(ForumUser, on_delete=models.CASCADE)
-    title = models.CharField(max_length=60 ,on_delete=models.CASCADE)
-    text = RichTextField(on_delete=models.CASCADE)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=60)
+    text = RichTextField()
+    creation = models.DateTimeField(auto_now_add=True)
     category = models.CharField(
         max_length=2,
         choices=CAT_CHOICES,
         default='QG',
         )
-
+    
     def __str__(self):
-        return f'{self.title} by {self.author}'
+        return f'{self.title} by {self.user}, {self.category}.'
+    
+
+class Response(models.Model):
+    response_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    response_to = models.ForeignKey(BoardNotice, on_delete=models.CASCADE)
+    creation = models.DateTimeField(auto_now_add=True)
+    text = RichTextField()
+    accepted = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ['-creation']
+    
+    def __str__(self):
+        return f'{self.response_user}. {self.creation}: {self.text}'

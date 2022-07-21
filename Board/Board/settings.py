@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'ckeditor',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -57,10 +60,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Board.urls'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static"
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -106,6 +113,26 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SITE_ID = 1
+
+dotenv.load_dotenv()
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ADMINS = [
+    ('Deity', 'ddeityy.dev@gmail.com'),
+]
+SERVER_EMAIL = 'django-ddeityy@yandex.com'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST='smtp.yandex.ru'
+EMAIL_PORT=465
+EMAIL_USE_SSL=True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + '@yandex.com'
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+#ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`

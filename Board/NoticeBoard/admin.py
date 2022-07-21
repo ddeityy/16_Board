@@ -1,3 +1,6 @@
+from lib2to3.pytree import Base
 from django.contrib import admin
+from .models import BoardNotice, Response
 
-# Register your models here.
+admin.site.register(BoardNotice)
+admin.site.register(Response)

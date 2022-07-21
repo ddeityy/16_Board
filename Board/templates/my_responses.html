@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% if responses %}
+        {%for post in responses %}
+            {% if filter.0 == user.id %}
+            <h3>{{ post.text|safe }}
+            <p>
+            <button onclick=location.href="/board/response/{{post.id}}/delete/">Delete</button>
+                {%if post.accepted == False%}
+                <button onclick=location.href="/board/response/{{post.id}}/accept/">Accept</button>
+                {% else %}
+                <button disabled onclick=location.href="/board/response/{{post.id}}/accept/">Accepted</button>
+                {% endif %}
+            <hr>    
+            {% endif %}
+        {% endfor %}
+    {% else %}
+    No responses.
+    {% endif %}
+{% endblock content %} 
