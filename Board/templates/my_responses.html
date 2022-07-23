@@ -4,7 +4,7 @@
     {% if filterset %}
     <form action="" method="get">
         {{ filterset.form }}
-        <input type="submit" value="Найти">
+        <input type="submit" value="Find">
     </form>
         {% if filterset.qs %}
             {%for post in filterset.qs %}
