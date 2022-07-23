@@ -24,14 +24,9 @@ class MyResponses(ListView):
     template_name = 'my_responses.html'
     context_object_name = 'responses'
     
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        self.filterset = ResponseFilter(self.request.GET, queryset=Response.objects.filter(response_to__user=self.request.user))
-        return self.filterset.queryset
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filterset'] = self.filterset
+        context['filterset'] = ResponseFilter(self.request.GET, queryset=Response.objects.filter(response_to__user=self.request.user))
         return context
 
 @login_required

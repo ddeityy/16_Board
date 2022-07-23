@@ -7,9 +7,9 @@ def get_post_user(request):
 
 class ResponseFilter(FilterSet):
         
-    response_to = ModelChoiceFilter(
+    """response_to = ModelChoiceFilter(
         queryset=get_post_user
-    )
+    )"""
     
     class Meta:
         model = Response
