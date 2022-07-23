@@ -4,7 +4,7 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
         <style>
-            body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} MidnightBlue {% else %} OldLace {% endif %};}
+            body {background-color: {% if current_time.hour >= 19 or current_time.hour <= 7 %} OldLace {% else %} Gray {% endif %};}
         </style>
     </head>
     <body>
