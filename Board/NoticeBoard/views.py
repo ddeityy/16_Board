@@ -5,6 +5,7 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
+from .filters import *
 
 
 class Board(ListView):
@@ -23,16 +24,30 @@ class MyResponses(ListView):
     template_name = 'my_responses.html'
     context_object_name = 'responses'
     
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = ResponseFilter(self.request.GET, queryset=Response.objects.filter(response_to__user=self.request.user))
+        return self.filterset.queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter'] = BoardNotice.objects.filter(user_id=self.request.user.id)\
-            .values_list('user_id', flat=True)
+        context['filterset'] = self.filterset
         return context
 
 @login_required
 def accept(self, pk):
     Response.objects.filter(id=pk).update(accepted=True)
     return redirect('/accounts/profile/')
+
+class ResponseSearch(ListView):
+    template_name = 'search.html'
+    model = Response
+    ordering = '-creation'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = ResponseFilter(self.request.GET, queryset=self.get_queryset())
+        return context
 
 class DeleteResponce(LoginRequiredMixin, DeleteView):
     model = Response

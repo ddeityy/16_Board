@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
 from django.views.generic.base import RedirectView
-from NoticeBoard.views import accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
+from NoticeBoard.views import ResponseSearch, accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
 
 
 urlpatterns = [
@@ -36,5 +36,5 @@ urlpatterns = [
     path('board/response/<int:pk>/accept/', accept),
     path('board/response/<int:pk>/delete/', DeleteResponce.as_view()),
     path('accounts/profile/', MyResponses.as_view(), name='responses'),
-    #path('accounts/responses/'),
+    path('accounts/profile/search/', ResponseSearch.as_view(), name='response_search'),
 ]
