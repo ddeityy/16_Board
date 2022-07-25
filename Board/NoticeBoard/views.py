@@ -1,11 +1,12 @@
 from django.shortcuts import HttpResponseRedirect, redirect
-from django.urls import reverse_lazy
-from django.views.generic import *
+from django.urls import reverse_lazy, reverse
+from django.views.generic import * 
 from .models import *
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import *
 from .filters import *
+from django.core.mail import send_mail
 
 
 class Board(ListView):
@@ -30,8 +31,23 @@ class MyResponses(ListView):
         return context
 
 @login_required
-def accept(self, pk):
+def accept(request, pk):
     Response.objects.filter(id=pk).update(accepted=True)
+    
+    instance = Response.objects.filter(id=pk)
+    
+    post_author = list(instance.values_list('response_to__user__username', flat=True))
+    subject = f'{post_author}'
+    response_user = list(instance.values_list("response_user__username", flat=True))
+    email = list(instance.values_list("response_user__email", flat=True))
+        
+    send_mail(
+        subject=subject,
+        message=f"Greetings, {response_user[0]}\n"                
+                f"Your response to {post_author[0]}'s post has been accepted!",
+        from_email='',
+        recipient_list=[email[0]])
+    
     return redirect('/accounts/profile/')
 
 class ResponseSearch(ListView):
@@ -66,6 +82,9 @@ class RespondToPost(LoginRequiredMixin, CreateView):
     template_name = 'respond.html'
     success_url = "/board/post/{}"
     context_object_name = 'response'
+    
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
     
     def form_valid(self, form):
         self.object = form.save(commit=False)

@@ -7,16 +7,16 @@
         <input type="submit" value="Find">
     </form>
         {% if filterset.qs %}
+            <hr>
             {%for post in filterset.qs %}
-                <hr>
                 <h3>{{ post.text|safe }}
-            {% endfor %}
             <button onclick=location.href="/board/response/{{post.id}}/delete/">Delete</button>
-            {%if post.accepted == False%}
-                <button onclick=location.href="/board/response/{{post.id}}/accept/">Accept</button>
-            {% else %}
-                <button disabled onclick=location.href="/board/response/{{post.id}}/accept/">Accepted</button>
-            {% endif %}
+                {%if post.accepted == False%}
+                    <button onclick=location.href="/board/response/{{post.id}}/accept/">Accept</button>
+                {% else %}
+                    <button disabled onclick=location.href="/board/response/{{post.id}}/accept/">Accepted</button>
+                {% endif %}
+            {% endfor %}
         {% endif %}    
         <hr>
     {% else %}

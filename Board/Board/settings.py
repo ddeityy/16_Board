@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'NoticeBoard',
+    'NoticeBoard.apps.NoticeboardConfig',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
