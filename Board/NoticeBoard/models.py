@@ -33,6 +33,11 @@ class BoardNotice(models.Model):
     def __str__(self):
         return f'{self.title} by {self.user}, {self.category}.'
 
+class OneTimeCode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=10)
+    creation = models.DateTimeField(auto_now_add=True)
+
 class Response(models.Model):
     response_user = models.ForeignKey(User, on_delete=models.CASCADE)
     response_to = models.ForeignKey(BoardNotice, on_delete=models.CASCADE)

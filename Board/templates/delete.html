@@ -4,7 +4,8 @@
 <hr>
 <form action="" method="post">
     {% csrf_token %}
-    <p>Delete "{{ object }}"?</p>
+    <p>Delete?
+    <p>{{ object.text|safe }}</p>
     {{ form }}
     <input type="submit" value="Delete" />
 </form>

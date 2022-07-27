@@ -1,3 +1,4 @@
+from time import sleep
 from django.db.models.signals import *
 from django.dispatch import receiver
 from django.core.mail import *
@@ -21,4 +22,3 @@ def send_response_email(created, instance, *args, **kwargs):
                 f"from - {response_user}\n",
         from_email='',
         recipient_list=[post_author_email])
-        

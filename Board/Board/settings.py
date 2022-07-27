@@ -41,9 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.staticfiles',
     'NoticeBoard.apps.NoticeboardConfig',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
     'ckeditor',
     'django_filters',
 ]
@@ -127,18 +124,15 @@ EMAIL_PORT=465
 EMAIL_USE_SSL=True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER + '@yandex.com'
 
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-#ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
-    'django.contrib.auth.backends.ModelBackend',
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend'
 ]
 
 # Internationalization

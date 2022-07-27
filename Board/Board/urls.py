@@ -13,17 +13,20 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from lib2to3.pytree import Base
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
 from django.views.generic.base import RedirectView
-from NoticeBoard.views import ResponseSearch, accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
+from NoticeBoard.views import otc, register_view, MyResponsesPost, accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     
-    path('accounts/', include('allauth.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/', register_view),
+    path('accounts/register/otc/', otc),
     
     path('', RedirectView.as_view(url='board')),
     
@@ -36,5 +39,5 @@ urlpatterns = [
     path('board/response/<int:pk>/accept/', accept),
     path('board/response/<int:pk>/delete/', DeleteResponce.as_view()),
     path('accounts/profile/', MyResponses.as_view(), name='responses'),
-    path('accounts/profile/search/', ResponseSearch.as_view(), name='response_search'),
+    path('accounts/profile/post/<int:pk>/', MyResponsesPost.as_view(), name='response_post'),
 ]

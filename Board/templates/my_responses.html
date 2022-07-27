@@ -1,25 +1,30 @@
 {% extends 'base.html' %}
 
+{% load custom_filters %}   
+
+{% load static %}
+
+<head>{% block title %} Board {% endblock title %}</head>
+
 {% block content %}
-    {% if filterset %}
-    <form action="" method="get">
-        {{ filterset.form }}
-        <input type="submit" value="Find">
-    </form>
-        {% if filterset.qs %}
+
+{% if board %}
+    {% for n in board %}
+        {% if n.user == request.user %}
+            <h1><a href="/accounts/profile/post/{{n.id}}/">{{n.title|safe}}</a>
+            <p>
+            <h2>{{n.text|safe}}
+            <p>
+            <h4>{{n.user}}, {{n.category}}
+            <h4>{{n.creation|date:'M d H:i'}}
+            <p>
+            <button onclick=location.href="/board/post/{{n.id}}/delete/">Delete</button>
+            <button onclick=location.href="/board/post/{{n.id}}/edit/">Edit</button>
             <hr>
-            {%for post in filterset.qs %}
-                <h3>{{ post.text|safe }}
-            <button onclick=location.href="/board/response/{{post.id}}/delete/">Delete</button>
-                {%if post.accepted == False%}
-                    <button onclick=location.href="/board/response/{{post.id}}/accept/">Accept</button>
-                {% else %}
-                    <button disabled onclick=location.href="/board/response/{{post.id}}/accept/">Accepted</button>
-                {% endif %}
-            {% endfor %}
-        {% endif %}    
-        <hr>
-    {% else %}
-    No responses.
-    {% endif %}
+        {% endif %}
+
+    {% endfor %}
+{% else %}
+    <h1> Nothing to see here, stalker
+{% endif %}
 {% endblock content %}
