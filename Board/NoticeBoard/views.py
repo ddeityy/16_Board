@@ -10,42 +10,6 @@ import random
 import string
 from django.contrib.auth import login, authenticate
 
-class Board(ListView):
-    model = BoardNotice
-    ordering = '-creation'
-    template_name = 'board.html'
-    context_object_name = 'board'
-    paginate_by = 5
-
-    def get_queryset(self):
-        return super().get_queryset()
-
-class MyResponses(ListView):
-    model = BoardNotice
-    ordering = '-creation'
-    template_name = 'my_responses.html'
-    context_object_name = 'board'
-
-    def get_queryset(self):
-        return super().get_queryset()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filterset'] = Response.objects.filter(response_to__user=self.request.user)
-        return context
-
-class MyResponsesPost(DetailView):
-
-    model = BoardNotice
-    ordering = ['-creation']
-    template_name = 'my_post_responses.html'
-    context_object_name = 'post'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['responses'] = Response.objects.filter(response_to_id=self.kwargs.get('pk'))
-        return context
-
 @login_required
 def accept(request, pk):
     Response.objects.filter(response_to_id=pk).update(accepted=True)
@@ -55,25 +19,15 @@ def accept(request, pk):
     post_id = list(instance.values_list('response_to__id', flat=True))
     response_user = list(instance.values_list("response_user__username", flat=True))
     email = list(instance.values_list("response_user__email", flat=True))
-    
+
     send_mail(
         subject=post_author[0],
         message=f"Greetings, {response_user[0]}\n"
                 f"Your response to {post_author[0]}'s post has been accepted!",
         from_email='',
         recipient_list=[email[0]])
-    
+
     return HttpResponseRedirect(f'/accounts/profile/post/{post_id[0]}/')
-
-class DeleteResponce(LoginRequiredMixin, DeleteView):
-    model = Response
-    template_name = 'delete.html'
-    success_url = '/accounts/profile/'
-
-class NoticeDetail(LoginRequiredMixin, DetailView):
-    model = BoardNotice
-    template_name = 'notice.html'
-    context_object_name = 'post'
 
 def register_view(request):
     form = BaseRegisterForm(request.POST)
@@ -95,6 +49,22 @@ def register_view(request):
         form = BaseRegisterForm
     return render(request, 'registration/register.html', {'form': form})
 
+def mass_mail(request):
+    form = MassMailForm(request.POST)
+    if form.is_valid():
+        form.save()
+        subject = form.cleaned_data.get('title')
+        text = form.cleaned_data.get('text')
+        mail_list = [mail for mail in User.objects.all().values_list('email', flat=True)[1:]]
+        send_mail(
+            f'{subject}',
+            f'{text}',
+            '',
+            mail_list
+        )
+        return redirect('/')
+    return render(request, 'send_mass_mail.html', {'form': form})
+
 def otc(request):
     form = OneTimeForm(request.POST)
     if form.is_valid():
@@ -111,6 +81,57 @@ def otc(request):
     else:
         form = OneTimeForm()
     return render(request, 'registration/otc.html', {'form': form})
+
+class Board(ListView):
+    model = BoardNotice
+    ordering = '-creation'
+    template_name = 'board.html'
+    context_object_name = 'board'
+    paginate_by = 5
+
+    def get_queryset(self):
+        return super().get_queryset()
+
+
+class MyResponses(ListView):
+    model = BoardNotice
+    ordering = '-creation'
+    template_name = 'my_responses.html'
+    context_object_name = 'board'
+
+    def get_queryset(self):
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = Response.objects.filter(response_to__user=self.request.user)
+        return context
+
+
+class MyResponsesPost(DetailView):
+
+    model = BoardNotice
+    ordering = ['-creation']
+    template_name = 'my_post_responses.html'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['responses'] = Response.objects.filter(response_to_id=self.kwargs.get('pk'))
+        return context
+
+
+class DeleteResponce(LoginRequiredMixin, DeleteView):
+    model = Response
+    template_name = 'delete.html'
+    success_url = '/accounts/profile/'
+
+
+class NoticeDetail(LoginRequiredMixin, DetailView):
+    model = BoardNotice
+    template_name = 'notice.html'
+    context_object_name = 'post'
+
 
 class RespondToPost(LoginRequiredMixin, CreateView):
     model = Response
@@ -133,10 +154,12 @@ class RespondToPost(LoginRequiredMixin, CreateView):
     def get_success_url(self, **kwargs):
         return reverse('notice_detail', kwargs={'pk': self.kwargs.get('pk')})
 
+
 class DeletePost(LoginRequiredMixin, DeleteView):
     model = BoardNotice
     template_name = 'delete.html'
     success_url = reverse_lazy('board')
+
 
 class CreateNotice(LoginRequiredMixin, CreateView):
     form_class = BoardForm
@@ -150,6 +173,7 @@ class CreateNotice(LoginRequiredMixin, CreateView):
         self.object.user = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
+
 
 class EditNotice(LoginRequiredMixin, UpdateView):
     form_class = BoardForm

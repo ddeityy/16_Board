@@ -56,3 +56,8 @@ class OneTimeForm(forms.ModelForm):
             )
         return cleaned_data
         
+class MassMailForm(forms.ModelForm):
+    class Meta:
+        model = MassMail
+        fields = ['title', 'text']
+    

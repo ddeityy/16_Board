@@ -18,17 +18,19 @@ from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import path, include
 from django.views.generic.base import RedirectView
-from NoticeBoard.views import otc, register_view, MyResponsesPost, accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
+from NoticeBoard.views import mass_mail , otc, register_view, MyResponsesPost, accept, Board, CreateNotice, DeletePost, DeleteResponce, EditNotice, MyResponses, NoticeDetail, RespondToPost
 
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='board')),
+    
     path('admin/', admin.site.urls),
     
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', register_view),
     path('accounts/register/otc/', otc),
     
-    path('', RedirectView.as_view(url='board')),
+    path('send_mass_mail/', mass_mail),
     
     path('board/', Board.as_view(), name='board'),
     path('board/post/create/', CreateNotice.as_view(), name='board_new'),
@@ -36,8 +38,10 @@ urlpatterns = [
     path('board/post/<int:pk>/edit/', EditNotice.as_view(), name='board_new'),
     path('board/post/<int:pk>/respond/', RespondToPost.as_view(), name='respond'),
     path('board/post/<int:pk>/delete/', DeletePost.as_view()),
+    
     path('board/response/<int:pk>/accept/', accept),
     path('board/response/<int:pk>/delete/', DeleteResponce.as_view()),
+    
     path('accounts/profile/', MyResponses.as_view(), name='responses'),
     path('accounts/profile/post/<int:pk>/', MyResponsesPost.as_view(), name='response_post'),
 ]

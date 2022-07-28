@@ -3,6 +3,7 @@ from celery import Celery
 from celery.schedules import crontab
 
 """
+redis-server
 celery -A Board worker -l INFO
 celery -A Board beat -l INFO
 """

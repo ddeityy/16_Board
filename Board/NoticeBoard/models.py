@@ -50,3 +50,12 @@ class Response(models.Model):
     
     def __str__(self):
         return f'{self.response_user}. {self.creation}: {self.text}'
+
+
+class MassMail(models.Model):
+    title = models.CharField(max_length=50)
+    text = models.TextField()
+    creation = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.title} - {self.creation}'
